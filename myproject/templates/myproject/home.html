@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClipAI - Streamline Your Workflow</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom styles */
+    body {
+      background-color: #F5F5FF; /* Light purple background */
+      color: #333333;
+      overflow-x: hidden; /* Prevent horizontal scrolling */
+    }
+    .container {
+      width: 100%; /* Full width */
+      max-width: 1280px; /* Max width for large screens */
+      margin: 0 auto; /* Centering the container */
+      padding: 0 2rem; /* Padding on smaller screens */
+    }
+    .navbar-bg {
+    background-color: #FFF; /* White navbar */
+    color: #333333;
+    border-radius: 20px; /* Circular rectangle shape */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    padding: 10px 100px; /* Adjust padding */
+    display: flex; /* Use flexbox for alignment */
+    justify-content: space-between; /* Align items horizontally */
+    align-items: center; /* Align items vertically */
+    width: calc(50% - 100px); /* Responsive width calculation */
+    margin: 10px auto 0 auto; /* Top margin 30px, auto horizontal */
+    position: fixed; /* Fixed position */
+    top: 0; /* Start at top */
+    left: 0; /* Align left */
+    right: 0; /* Align right */
+    animation: slideDown 1s ease forwards 0.5s; /* Animation with delay */
+    opacity: 0; /* Start as hidden */
+  }
+  @keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* Adjustments for button in the navigation bar */
+  .nav-button {
+    background-color: #6750A4; /* Button color */
+    color: #FFFFFF; /* Text color */
+    padding: 6px 12px; /* Reduced padding to save space */
+    border-radius: 8px; /* Rounded corners */
+    border: none; /* No border */
+    font-size: 0.75rem; /* Reduced font size to fit on one line */
+    white-space: nowrap; /* Prevents wrapping */
+    display: inline-block; /* Helps maintain layout */
+    min-width: 90px; /* Minimum width to ensure content fits */
+  }
+
+    /* Responsive font sizes and padding */
+    h1, h2, h3, p {
+      font-size: 1.25rem; /* Base font size */
+      padding: 0 1rem; /* Padding around text */
+    }
+    @media (min-width: 640px) {
+      .container, .navbar-bg { padding: 0 4%; }
+    }
+    @media (min-width: 768px) {
+    .nav-button {
+      padding: 8px 16px; /* Slightly larger padding on larger screens */
+      font-size: 0.875rem; /* Slightly larger font size on larger screens */
+      min-width: 100px; /* Adjust minimum width for larger screens */
+    }
+  }
+    @media (min-width: 1024px) {
+      h1 { font-size: 3xl; }
+      h2 { font-size: 2xl; }
+      h3 { font-size: xl; }
+      p { font-size: lg; }
+      .container, .navbar-bg { padding: 0 8%; }
+    }
+    @media (min-width: 1280px) {
+      .container, .navbar-bg { padding: 0 10%; }
+    }
+
+    /* Rest of your CSS styles */
+    
+    /* Animations */
+    .hover-scale {
+      transition: transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+    }
+    .hover-scale:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  /* Custom Tailwind utility class for light green background */
+  .hover\:bg-light-green-200:hover {
+    background-color: #ccffcc; /* Light green */
+  }
+
+  .problem-card {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #ffffff; /* Default white background */
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s; /* Include transform in the transition */
+    will-change: transform, box-shadow; /* Optimizes animations */
+  }
+
+  .problem-card:hover {
+    background-color: #ccffcc; /* Light green on hover */
+    transform: scale(1.05); /* Scales up on hover */
+    animation: goldGlow 1.5s infinite alternate;
+  }
+
+  @keyframes goldGlow {
+    from {
+      box-shadow: 0 0 10px #ffcc00; /* Start of gold glow */
+    }
+    to {
+      box-shadow: 0 0 20px #ffdd55; /* End of gold glow, brighter */
+    }
+  }
+    .accordion-button {
+      cursor: pointer;
+      transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    }
+    .accordion-button:hover {
+      background-color: #E5E5FF; /* Light purple hover */
+      color: #5B47FF; /* Matching text */
+    }
+    /* Accordion animation */
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease-in-out;
+    }
+    .accordion-content.active {
+      max-height: 500px; /* Adjust as needed */
+    }
+
+    @keyframes fade-in-slide {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .animate-fade-in-slide {
+      animation: fade-in-slide 1s ease forwards;
+    }
+
+@keyframes fade-in-slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.animate-fade-in-slide-right {
+  animation: fade-in-slide-right 1s ease forwards;
+}
+
+/* Hover Animation 1 */
+/* New Hover Animation for Container */
+.hover-animation-1 {
+  transition: transform 0.3s ease-in-out;
+}
+.hover-animation-1:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(128, 0, 128, 0.5); /* Purple glow effect */
+}
+
+
+/* Hover Animation 2 */
+.hover-animation-2 {
+  transition: transform 0.3s ease-in-out;
+}
+.hover-animation-2:hover {
+  transform: scale(1.03);
+}
+
+/* Hover Animation 3 */
+.hover-animation-3 {
+  transition: transform 0.3s ease-in-out;
+}
+.hover-animation-3:hover {
+  transform: translateY(-8px);
+}
+
+/* Hover Animation 4 */
+.hover-animation-4 {
+  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+.hover-animation-4:hover {
+  background-color: #f0f0f0;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.marquee {
+  display: flex;
+  animation: marquee 20s linear infinite;
+}
+
+.marquee div {
+  flex: none;
+  width: 20vw; /* Adjust based on your preferred size */
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); } /* Only need to move by half because of duplication */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.1); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .bg-light-purple-200 { background-color: #E5E5FF; } /* Lighter purple for hover */
+  .bg-light-purple-300 { background-color: #D6D6FF; } /* Standard light purple background */
+
+  .left-container {
+    transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
+  }
+
+  .left-container:hover {
+    background-color: #E5E5FF; /* Lighter purple on hover */
+    transform: scale(1.02); /* Slightly scales up */
+  }
+
+  .info-container {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .info-container:hover {
+    transform: translateY(-10px); /* Moves up slightly on hover */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25); /* Enhances shadow for a lifting effect */
+  }
+  iframe, .info-container {
+    margin-top: 50px; /* Additional vertical spacing */
+    transition: margin 0.3s ease-in-out;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .left-container {
+    animation: slideUp 1s ease-out forwards; /* Animation for the left container */
+  }
+
+  .info-container {
+    animation: fadeIn 2s ease-out forwards; /* Animation for the info container under the iframe */
+  }
+
+  .left-container {
+    background-color: rgba(214, 214, 255, 1); /* Initial full purple */
+    transition: background-color 0.3s ease-in-out; /* Smooth transition for color change */
+}
+
+  </style>
+</head>
+<body>
+<!-- Navigation bar -->
+<nav class="navbar-bg py-4 fixed top-0 left-0 right-0 z-50">
+  <div class="container mx-auto px-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold mr-auto" style="margin-left: -150px;">ClipAI</h1> <!-- Updated -->
+    <div class="hidden md:flex items-center space-x-4">
+      <a href="#hero" class="nav-link text-purple-700 hover:text-purple-900" onclick="smoothScroll('#hero')">Home</a>
+      <a href="#problems" class="nav-link text-purple-700 hover:text-purple-900" onclick="smoothScroll('#problems')">Problems</a>
+      <a href="#features" class="nav-link text-purple-700 hover:text-purple-900" onclick="smoothScroll('#features')">Features</a>
+      <a href="#faq" class="nav-link text-purple-700 hover:text-purple-900" onclick="smoothScroll('#faq')">FAQ</a>
+      <a href="#signup" class="nav-link text-purple-700 hover:text-purple-900" onclick="smoothScroll('#signup')">Sign Up</a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- Hero Section -->
+<section id="hero" class="flex h-screen text-center">
+  <!-- Left Container (Light Purple, interactive hover) -->
+  <div class="left-container w-1/2 flex flex-col justify-center items-center bg-light-purple-300 hover:bg-light-purple-200 transition-colors duration-300">
+    <h1 class="text-5xl font-bold text-purple-900 mb-4">Welcome to ClipAI</h1>
+    <p class="text-lg text-purple-800 mb-6">Revolutionize your content creation process with our advanced editing solutions.</p>
+    <button onclick="document.getElementById('signup').scrollIntoView({ behavior: 'smooth' });" class="bg-purple-700 hover:bg-purple-800 text-white py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out">Sign Up Now</button>
+  </div>
+  <!-- Right Container (Standard Background) -->
+  <div class="w-1/2 flex flex-col items-center bg-f5f5ff hover:bg-gray-100 transition-colors duration-300" style="padding-top: 80px;">
+    <!-- Embedded YouTube Video -->
+    <iframe id="video-frame" style="width: 80%; height: 50%; margin-top: 60px;" src="https://www.youtube.com/embed/QRZ_l7cVzzU" title="YouTube video" frameborder="0" allowfullscreen></iframe>
+    <!-- Additional Content Container -->
+    <div class="info-container mt-8 w-full" style="width: 80%; background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); transition: all 0.3s ease-in-out;">
+      <span class="text-3xl">🏆</span>
+      <h2 class="text-xl font-bold mt-2"> #1 AI Driven Social Media Manager</h2>
+      <p class="text-gray-600">We have been consistently voted the #1 social media manager for short form content.</p>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+<!-- Features Section -->
+<section id="features" class="py-20 fade-in">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-3xl font-bold text-purple-700 mb-8">Features</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Feature 1 -->
+      <div class="flex flex-col items-center justify-center hover-scale">
+        <span class="text-7xl">🎬</span>
+        <h3 class="text-2xl font-semibold mt-4">Automated Editing</h3>
+        <p class="mt-2 text-lg text-gray-500">ClipAI automates repetitive editing tasks, saving you time and effort.</p>
+      </div>
+      <!-- Feature 2 -->
+      <div class="flex flex-col items-center justify-center hover-scale">
+        <span class="text-7xl">🤖</span>
+        <h3 class="text-2xl font-semibold mt-4">AI-Powered Tools</h3>
+        <p class="mt-2 text-lg text-gray-500">ClipAI analyzes your content to suggest the best edits, ensuring high-quality results.</p>
+      </div>
+      <!-- Feature 3 -->
+      <div class="flex flex-col items-center justify-center hover-scale">
+        <span class="text-7xl">🚀</span>
+        <h3 class="text-2xl font-semibold mt-4">Efficiency Boost</h3>
+        <p class="mt-2 text-lg text-gray-500">Focus on creating captivating content while ClipAI handles the editing process, boosting productivity.</p>
+      </div>
+      <!-- Feature 4 -->
+      <div class="flex flex-col items-center justify-center hover-scale">
+        <span class="text-7xl">🎨</span>
+        <h3 class="text-2xl font-semibold mt-4">Creative Effects</h3>
+        <p class="mt-2 text-lg text-gray-500">Enhance your videos with a variety of creative effects and filters, adding visual appeal.</p>
+      </div>
+      <!-- Feature 5 -->
+      <div class="flex flex-col items-center justify-center hover-scale">
+        <span class="text-7xl">🔍</span>
+        <h3 class="text-2xl font-semibold mt-4">Advanced Analysis</h3>
+        <p class="mt-2 text-lg text-gray-500">Gain insights into your audience and content performance through advanced analytics tools.</p>
+      </div>
+      <!-- Feature 6 -->
+      <div class="flex flex-col items-center justify-center hover-scale">
+        <span class="text-7xl">📈</span>
+        <h3 class="text-2xl font-semibold mt-4">Performance Tracking</h3>
+        <p class="mt-2 text-lg text-gray-500">Track the success of your videos with detailed performance metrics, allowing for data-driven decisions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Social Media Optimized Content Section -->
+<section id="social-media-scroll" class="relative overflow-hidden py-20 bg-f5f5ff text-center">
+  <h2 class="text-3xl font-bold text-purple-700 mb-8">Get Content Optimized for:</h2>
+  <div class="flex overflow-hidden relative">
+    <div class="marquee">
+      <div class="inline-block">
+        <img src="https://static.vecteezy.com/system/resources/previews/023/986/561/non_2x/tiktok-logo-tiktok-logo-transparent-tiktok-icon-transparent-free-free-png.png" alt="TikTok Logo" class="mx-4">
+      </div>
+      <div class="inline-block">
+        <img src="https://static.vecteezy.com/system/resources/previews/023/986/704/non_2x/youtube-logo-youtube-logo-transparent-youtube-icon-transparent-free-free-png.png" alt="YouTube Logo" class="mx-4">
+      </div>
+      <div class="inline-block">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/600px-Instagram_icon.png" alt="Instagram Icon" class="mx-4">
+      </div>
+      <div class="inline-block">
+        <img src="https://i.pinimg.com/originals/06/a5/11/06a511748cbc60f9ce3da46ee79ee8fc.png" alt="Facebook Logo" class="mx-4">
+      </div>
+      <div class="inline-block">
+        <img src="https://pngfre.com/wp-content/uploads/Snapchat-5.png" alt="Snapchat Icon" class="mx-4">
+      </div>
+      <!-- Repeat the set for continuous appearance -->
+      <div class="inline-block">
+        <img src="https://static.vecteezy.com/system/resources/previews/023/986/561/non_2x/tiktok-logo-tiktok-logo-transparent-tiktok-icon-transparent-free-free-png.png" alt="TikTok Logo" class="mx-4">
+      </div>
+      <div class="inline-block">
+        <img src="https://static.vecteezy.com/system/resources/previews/023/986/704/non_2x/youtube-logo-youtube-logo-transparent-youtube-icon-transparent-free-free-png.png" alt="YouTube Logo" class="mx-4">
+      </div>
+      <div class="inline-block">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/600px-Instagram_icon.png" alt="Instagram Icon" class="mx-4">
+      </div>
+      <div class="inline-block">
+        <img src="https://i.pinimg.com/originals/06/a5/11/06a511748cbc60f9ce3da46ee79ee8fc.png" alt="Facebook Logo" class="mx-4">
+      </div>
+      <div class="inline-block">
+        <img src="https://pngfre.com/wp-content/uploads/Snapchat-5.png" alt="Snapchat Icon" class="mx-4">
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+  <!-- Problems Section -->
+  <section id="problems" class="py-20 fade-in">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold text-purple-700 mb-8">Problems ClipAI Solves</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="border border-gray-300 p-4 rounded-lg hover:shadow-lg problem-card">
+          <h3 class="text-2xl font-semibold text-purple-700">Time-Consuming Editing</h3>
+          <p class="mt-2 text-lg text-gray-500">ClipAI automates editing tasks, saving hours of manual work.</p>
+        </div>
+        <div class="border border-gray-300 p-4 rounded-lg hover:shadow-lg problem-card">
+          <h3 class="text-2xl font-semibold text-purple-700">Inconsistent Quality</h3>
+          <p class="mt-2 text-lg text-gray-500">ClipAI ensures consistent, high-quality edits, reducing human error.</p>
+        </div>
+        <div class="border border-gray-300 p-4 rounded-lg hover:shadow-lg problem-card">
+          <h3 class="text-2xl font-semibold text-purple-700">Limited Time for Content Creation</h3>
+          <p class="mt-2 text-lg text-gray-500">ClipAI frees up time for content creation, allowing you to focus on what matters.</p>
+        </div>
+        <div class="border border-gray-300 p-4 rounded-lg hover:shadow-lg problem-card">
+          <h3 class="text-2xl font-semibold text-purple-700">Short-Form Optimization</h3>
+          <p class="mt-2 text-lg text-gray-500">ClipAI optimizes content for short-form platforms, maximizing engagement.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+  <!-- FAQ Section -->
+  <section id="faq" class="py-20 fade-in">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold text-purple-700 mb-8">FAQ</h2>
+      <div class="grid grid-cols-1 gap-6">
+        <div class="accordion-item border border-gray-300 rounded-lg">
+          <div class="accordion-button flex items-center justify-between p-4" onclick="toggleAccordion(1)">
+            <span class="text-lg font-semibold">How does ClipAI work?</span>
+            <svg class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+          <div id="accordion-item-1" class="accordion-content p-4">
+            <p class="text-gray-500">ClipAI uses advanced algorithms to analyze video content and apply edits automatically based on predefined preferences and style guidelines.</p>
+          </div>
+        </div>
+        <div class="accordion-item border border-gray-300 rounded-lg">
+          <div class="accordion-button flex items-center justify-between p-4" onclick="toggleAccordion(2)">
+            <span class="text-lg font-semibold">Can I customize the edits?</span>
+            <svg class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+          <div id="accordion-item-2" class="accordion-content p-4">
+            <p class="text-gray-500">Yes, ClipAI provides customization options to fine-tune the edits according to your preferences, ensuring your unique style is reflected in the final output.</p>
+          </div>
+        </div>
+        <div class="accordion-item border border-gray-300 rounded-lg">
+          <div class="accordion-button flex items-center justify-between p-4" onclick="toggleAccordion(3)">
+            <span class="text-lg font-semibold">Is ClipAI suitable for all types of content?</span>
+            <svg class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+          <div id="accordion-item-3" class="accordion-content p-4">
+            <p class="text-gray-500">ClipAI is designed to cater to a wide range of content types, including vlogs, tutorials, advertisements, and social media posts.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Signup Form -->
+  <section id="signup" class="py-20 fade-in">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold text-purple-700 mb-8">Get Early Access</h2>
+      <form method="post" action="{% url 'signup' %}" class="mx-auto max-w-md">
+        {% csrf_token %}
+        <input type="email" name="email" class="w-full mb-4 py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-700" placeholder="Your Email" required />
+        <button type="submit" class="cta-btn hover-scale">Join Newsletter</button>
+      </form>
+      
+    </div>
+  </section>
+
+<!-- Footer -->
+<footer class="bg-f5f5ff text-gray-700 body-font">
+  <div class="container px-5 py-8 mx-auto flex items-center sm:flex-row flex-col">
+    <a class="flex title-font font-medium items-center md:justify-start justify-center text-gray-900">
+      <img src="https://gcdnb.pbrd.co/images/Rx9sUsZC70kt.webp?o=1" alt="ClipAI Logo" class="w-10 h-10 text-white p-2 bg-indigo-500 rounded-full">
+      <span class="ml-3 text-xl">ClipAI</span>
+    </a>
+    <p class="text-sm text-gray-500 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0 mt-4">© 2024 ClipAI —
+      <a href="https://twitter.com/clipai" class="text-gray-600 ml-1" rel="noopener noreferrer" target="_blank">@clipai</a>
+    </p>
+    <span class="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
+      <a href="#" class="text-gray-500">
+        <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+        </svg>
+      </a>
+      <a href="#" class="ml-3 text-gray-500">
+        <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+          <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+        </svg>
+      </a>
+      <a href="#" class="ml-3 text-gray-500">
+        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+          <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+          <path d="M16 11a4 4 0 0 1-8 0"></path>
+        </svg>
+      </a>
+    </span>
+  </div>
+</footer>
+
+
+  <!-- Scripts for animations -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const contents = document.querySelectorAll(".accordion-content");
+      contents.forEach(content => {
+        content.classList.remove("active");
+        content.style.maxHeight = null;
+        content.style.display = "none";
+      });
+    });
+  
+    function toggleAccordion(index) {
+      const contents = document.querySelectorAll(".accordion-content");
+  
+      contents.forEach(content => {
+        if (content.id === `accordion-item-${index}`) {
+          content.classList.toggle("active");
+  
+          if (content.classList.contains("active")) {
+            content.style.display = "block";
+            content.style.maxHeight = content.scrollHeight + "px";
+          } else {
+            content.style.display = "none";
+            content.style.maxHeight = null;
+          }
+        } else {
+          content.classList.remove("active");
+          content.style.display = "none";
+          content.style.maxHeight = null;
+        }
+      });
+    }
+  
+    // Scroll animations for fading in sections
+    document.addEventListener("scroll", () => {
+      const elements = document.querySelectorAll(".fade-in");
+      elements.forEach(element => {
+        if (element.getBoundingClientRect().top < window.innerHeight - 100) {
+          element.classList.add("visible");
+        }
+      });
+    });
+  
+    // Smooth scrolling for navigation links
+    const navLinks = document.querySelectorAll(".nav-link");
+    navLinks.forEach(link => {
+      link.addEventListener("click", e => {
+        e.preventDefault();
+        const targetId = link.getAttribute("href").substring(1);
+        const targetElement = document.getElementById(targetId);
+        targetElement.scrollIntoView({behavior: 'smooth'});
+      });
+    });
+
+
+    document.addEventListener("scroll", () => {
+    const heroSection = document.getElementById('hero');
+    const leftContainer = document.querySelector('.left-container');
+    const height = window.innerHeight;
+    const scrollY = window.scrollY;
+
+    // Adjust the rate of opacity change to be 2x faster
+    const opacity = 1 - Math.min(1, (scrollY / height) * 2);  // Multiply scrollY/height by 2
+    
+    // Update the background color using rgba to control opacity
+    leftContainer.style.backgroundColor = `rgba(214, 214, 255, ${opacity})`; // Adjust the RGB values to match the purple color you want
+});
+
+  </script>
+</body>
+</html>
+

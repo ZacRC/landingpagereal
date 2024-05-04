@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success - ClipAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Include Babel for JSX parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <style>
+        /* Custom styles based on the landing page */
+        body {
+            background-color: #F5F5FF; /* Light purple background */
+        }
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn-home {
+            background-color: #6750A4; /* Purple button */
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-home:hover {
+            background-color: #563D82; /* Darker purple */
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const SuccessPage = () => {
+            return (
+                <div className="container mt-10 text-center">
+                    <h1 className="text-3xl text-purple-700 font-bold mb-4">Welcome to ClipAI!</h1>
+                    <p className="text-lg text-gray-600 mb-8">You have successfully pre-signed up. We are excited to have you on board and look forward to helping you streamline your workflow!</p>
+                    <button className="btn-home" onClick={() => window.location.href='/'}>
+                        Go to Home
+                    </button>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<SuccessPage />, document.getElementById('root'));
+    </script>
+</body>
+</html>
