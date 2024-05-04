@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-4dx2mx(=%8sl=_gh61s+6u@-f4zb&y_jn2y!(*gs%e2_a8c$kk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['clipitai.onrender.com']
 
 
 # Application definition
